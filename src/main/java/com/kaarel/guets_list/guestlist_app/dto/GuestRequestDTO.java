@@ -1,5 +1,6 @@
 package com.kaarel.guets_list.guestlist_app.dto;
 
+import com.kaarel.guets_list.guestlist_app.model.Status;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,10 +8,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class GuestResponseDTO {
+public class GuestRequestDTO {
 
     private Long id;
     private String name;
     private boolean transportation;
-    private String status;
+    private Status status;
 }
