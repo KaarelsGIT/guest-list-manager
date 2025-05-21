@@ -1,5 +1,7 @@
 package com.kaarel.guets_list.guestlist_app.controller;
 
+import com.kaarel.guets_list.guestlist_app.dto.GuestListDTO;
+import com.kaarel.guets_list.guestlist_app.dto.GuestResponseDTO;
 import com.kaarel.guets_list.guestlist_app.model.Guest;
 import com.kaarel.guets_list.guestlist_app.service.GuestService;
 import lombok.AllArgsConstructor;
@@ -16,8 +18,25 @@ public class GuestController {
 
     private final GuestService guestService;
 
+    @PostMapping("/add")
+    public ResponseEntity<GuestResponseDTO> addGuest(@RequestBody Guest guest) {
+        try {
+            Guest savedGuest = guestService.save(guest);
+
+            GuestResponseDTO guestResponseDTO = new GuestResponseDTO(
+                    savedGuest.getId(),
+                    savedGuest.getName(),
+                    savedGuest.getStatus() != null ? savedGuest.getStatus().name() : null
+            );
+
+            return ResponseEntity.ok(guestResponseDTO);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
     @GetMapping("/all")
-    public ResponseEntity<Iterable<Guest>> getAllGuests(
+    public ResponseEntity<GuestListDTO> getAllGuests(
             @RequestParam(required = false, defaultValue = "asc") String direction,
             @RequestParam(required = false, defaultValue = "all") String status
     ) {
@@ -31,16 +50,16 @@ public class GuestController {
 
             List<Guest> guestList =  new ArrayList<>();
             guests.forEach(guestList::add);
-            return ResponseEntity.ok(guestList);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
 
-    @PostMapping("/add")
-    public ResponseEntity<Guest> addGuest(@RequestBody Guest guest) {
-        try {
-            return ResponseEntity.ok(guestService.save(guest));
+            int acceptedCount = (int) guestList.stream()
+                    .filter(g -> g.getStatus() != null && g.getStatus().name().equalsIgnoreCase("ACCEPTED"))
+                    .count();
+
+            GuestListDTO guestDTO = new GuestListDTO();
+            guestDTO.setGuests(guestList);
+            guestDTO.setAccepted(acceptedCount);
+
+            return ResponseEntity.ok(guestDTO);
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
