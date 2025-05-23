@@ -137,4 +137,14 @@ public class GuestController {
             return ResponseEntity.badRequest().body("Failed to deleting guest.");
         }
     }
+
+    @DeleteMapping("/deleteAll")
+    public ResponseEntity<String> deleteAllGuests() {
+        try {
+            guestService.deleteAll();
+            return ResponseEntity.ok("All guests have been deleted successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete all guests.");
+        }
+    }
 }
