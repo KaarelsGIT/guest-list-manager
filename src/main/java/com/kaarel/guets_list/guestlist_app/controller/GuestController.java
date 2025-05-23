@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/guest")
+@RequestMapping("/api/v1/guests")
 @AllArgsConstructor
 public class GuestController {
 
